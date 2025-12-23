@@ -75,9 +75,48 @@ class UserResponse(BaseModel):
     is_active: bool
     is_verified: bool
     created_at: datetime
+    
+    # New fields
+    profile_url: Optional[str] = None
+    bank_account: Optional[str] = None
+    bank_name: Optional[str] = None
+    commission_earned: Optional[float] = 0.0
+    referral_amount: Optional[float] = 0.0
+    guest_code: Optional[str] = None
+    coins_accumulated: Optional[float] = 0.0
 
     class Config:
         from_attributes = True
+
+
+class ProfileUrlUpdate(BaseModel):
+    profile_url: str
+
+class BankDetailsUpdate(BaseModel):
+    bank_account: str
+    bank_name: str
+
+class EarningsUpdate(BaseModel):
+    commission_earned: Optional[float] = None
+    referral_amount: Optional[float] = None
+
+class GuestCodeUpdate(BaseModel):
+    guest_code: str
+
+class CoinsUpdate(BaseModel):
+    coins_accumulated: float
+
+class GuestCodeRedeemRequest(BaseModel):
+    code: str
+
+class MiningStatusResponse(BaseModel):
+    is_mining: bool
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
+    current_mined: float = 0.0
+    rate_per_second: float = 0.0
+    total_coins_balance: float
+    remaining_seconds: int = 0
 
 
 class ProductResponse(BaseModel):

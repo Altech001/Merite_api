@@ -101,6 +101,18 @@ class User(Base):
     passphrase_hash = Column(String(255), nullable=True)
     celo_address = Column(String(255), nullable=True)
     sui_address = Column(String(255), nullable=True)
+    
+    # Profile & Bank Details
+    profile_url = Column(String(255), nullable=True)
+    bank_account = Column(String(50), nullable=True)
+    bank_name = Column(String(100), nullable=True)
+    
+    # Earnings & Rewards
+    commission_earned = Column(Float, default=0.00)
+    referral_amount = Column(Float, default=0.00)
+    guest_code = Column(String(50), unique=True, index=True, nullable=True)
+    has_redeemed_guest_code = Column(Boolean, default=False)
+    coins_accumulated = Column(Float, default=0.00)
 
     transactions = relationship("Transaction", back_populates="user", foreign_keys="Transaction.user_id")
     loans = relationship("Loan", back_populates="user", foreign_keys="Loan.user_id")
@@ -378,5 +390,22 @@ class Notification(Base):
     user = relationship("User", back_populates="notifications")
 
 
-# Update User model to include notifications relationship
+class CoinMiningSession(Base):
+    __tablename__ = "coin_mining_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    start_time = Column(DateTime(timezone=True), server_default=func.now())
+    end_time = Column(DateTime(timezone=True), nullable=False)
+    rate_per_second = Column(Float, default=0.0)
+    total_mined_in_session = Column(Float, default=0.0) # Updated when claimed/finished
+    is_active = Column(Boolean, default=True)
+    is_claimed = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", back_populates="mining_sessions")
+
+
+# Update User model to include notifications and mining relationship
 User.notifications = relationship("Notification", back_populates="user", order_by="desc(Notification.created_at)")
+User.mining_sessions = relationship("CoinMiningSession", back_populates="user", order_by="desc(CoinMiningSession.created_at)")

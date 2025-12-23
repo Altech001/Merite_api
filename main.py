@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routers import auth, users, wallet, loans, payments, admin, products, invests, notifications, passphrase, exportdata, offers, gifts, sell_airtime
+from app.routers import auth, users, wallet, loans, payments, admin, products, invests, notifications, passphrase, exportdata, offers, gifts, sell_airtime, reproducts
 
 Base.metadata.create_all(bind=engine)
 
@@ -36,6 +36,7 @@ app.include_router(exportdata.router)
 app.include_router(offers.router)
 app.include_router(gifts.router)
 app.include_router(sell_airtime.router)
+app.include_router(reproducts.router)
 
 
 @app.get("/")
@@ -52,6 +53,7 @@ def root():
             "notifications": "/notifications",
             "passphrase": "/passphrase",
             "exportdata": "/exportdata",
+            "relworx": "/relworx",
             "docs": "/docs"
         }
     }

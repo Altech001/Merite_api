@@ -178,6 +178,13 @@ def verify_otp(request: OTPVerifyRequest, req: Request, db: Session = Depends(ge
             if not db.query(User).filter(User.account_number == account_number).first():
                 break
         
+        # Generate unique guest code
+        import secrets
+        while True:
+            guest_code = "G-" + secrets.token_hex(4).upper() # e.g. G-1A2B3C4D
+            if not db.query(User).filter(User.guest_code == guest_code).first():
+                break
+        
         user = User(
             phone_number=phone_number,
             account_number=account_number,
@@ -185,6 +192,7 @@ def verify_otp(request: OTPVerifyRequest, req: Request, db: Session = Depends(ge
             loan_limit=DEFAULT_LOAN_LIMIT,
             loan_percent=DEFAULT_LOAN_PERCENT,
             is_verified=True,
+            guest_code=guest_code,
             role=UserRole.ADMIN if is_first_user else UserRole.USER
         )
         db.add(user)
